@@ -36,11 +36,19 @@ jobs:
     
     - name: Build Python packages
       run: python3 setup.py sdist bdist_wheel
-    
+
+
     - name: Get version
       id: get_version
-      run: echo ::set-output name=VERSION::$(python setup.py --version)
-      
+      run: |
+        VERSION=$(python -c "from setuptools import setup; setup()" --version 2>/dev/null)
+        if [ -z "$VERSION" ]; then
+          echo "Failed to extract version. Check your setup.py file."
+          exit 1
+        fi
+        echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
+        echo "Extracted version: $VERSION"
+    
     - name: Create and push tag
       run: |
         git config --local user.email "action@github.com"
