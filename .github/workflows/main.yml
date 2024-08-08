@@ -40,6 +40,13 @@ jobs:
     - name: Get version
       id: get_version
       run: echo ::set-output name=VERSION::$(python setup.py --version)
+      
+    - name: Create and push tag
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        git tag -a v${{ steps.get_version.outputs.VERSION }} -m "Release ${{ steps.get_version.outputs.VERSION }}"
+        git push origin v${{ steps.get_version.outputs.VERSION }}
     
     - name: Create Release
       id: create_release
