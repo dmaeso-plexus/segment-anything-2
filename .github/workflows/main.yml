@@ -1,0 +1,59 @@
+on:
+  schedule:
+    - cron: '0 0 * * *'  # Runs at 00:00 UTC every day
+  workflow_dispatch:  # Allows manual trigger
+
+jobs:
+  sync-build-release:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v2
+      with:
+        fetch-depth: 0
+    
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.x'  # Specify the Python version you need
+    
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install setuptools wheel
+    
+    - name: Sync Fork
+      run: |
+        git remote add upstream https://github.com/original-owner/original-repository.git
+        git fetch upstream
+        git checkout main
+        git merge upstream/main
+        git push origin main
+    
+    - name: Build Python packages
+      run: python3 setup.py sdist bdist_wheel
+    
+    - name: Get version
+      id: get_version
+      run: echo ::set-output name=VERSION::$(python setup.py --version)
+    
+    - name: Create Release
+      id: create_release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: v${{ steps.get_version.outputs.VERSION }}
+        release_name: Release ${{ steps.get_version.outputs.VERSION }}
+        draft: false
+        prerelease: false
+    
+    - name: Upload Release Asset
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./dist/*
+        asset_name: python-package-${{ steps.get_version.outputs.VERSION }}.zip
+        asset_content_type: application/zip
