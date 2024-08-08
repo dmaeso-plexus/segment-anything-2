@@ -24,7 +24,7 @@ jobs:
     
     - name: Sync Fork
       run: |
-        git remote add upstream https://github.com/original-owner/original-repository.git
+        git remote add upstream https://github.com/facebookresearch/segment-anything-2.git
         git fetch upstream
         git checkout main
         git merge upstream/main
