@@ -49,14 +49,30 @@ jobs:
         echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
         echo "Extracted version: $VERSION"
     
-    - name: Create and push tag
+  
+    - name: Check and handle existing tag
       run: |
+        if git rev-parse "v${{ steps.get_version.outputs.VERSION }}" >/dev/null 2>&1; then
+          echo "Tag v${{ steps.get_version.outputs.VERSION }} already exists. Deleting and recreating."
+          git push --delete origin "v${{ steps.get_version.outputs.VERSION }}"
+          git tag -d "v${{ steps.get_version.outputs.VERSION }}"
+        fi
         git config --local user.email "action@github.com"
         git config --local user.name "GitHub Action"
-        git tag -a v${{ steps.get_version.outputs.VERSION }} -m "Release ${{ steps.get_version.outputs.VERSION }}"
-        git push origin v${{ steps.get_version.outputs.VERSION }}
-
-     
+        git tag -a "v${{ steps.get_version.outputs.VERSION }}" -m "Release ${{ steps.get_version.outputs.VERSION }}"
+        git push origin "v${{ steps.get_version.outputs.VERSION }}"
+    
+    - name: Create/Update Release
+      id: create_release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: v${{ steps.get_version.outputs.VERSION }}
+        release_name: Release ${{ steps.get_version.outputs.VERSION }}
+        draft: false
+        prerelease: false
+    
     - name: Zip dist directory
       run: zip -r dist.zip dist
     
