@@ -33,10 +33,13 @@ jobs:
         git checkout main
         git merge upstream/main
         git push origin main
-    
+
+    - name: Update setup.py
+      run: |
+        sed -i 's/NAME = ".*"/NAME = "SAM_2"/' setup.py
+        
     - name: Build Python packages
       run: python3 setup.py sdist bdist_wheel
-
 
     - name: Get version
       id: get_version
