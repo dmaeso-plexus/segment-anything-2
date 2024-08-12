@@ -22,6 +22,12 @@ jobs:
         python -m pip install --upgrade pip
         pip install setuptools wheel
     
+    - name: Setup CUDA
+      uses: Jimver/cuda-toolkit@v0.2.11
+      id: cuda-toolkit
+      with:
+        cuda: '11.8.0'
+        
     - name: Install GPU PyTorch and torchvision
       run: |
         pip install torch>=2.3.1 torchvision>=0.18.1 --extra-index-url https://download.pytorch.org/whl/cu118
@@ -41,6 +47,9 @@ jobs:
         sed -i 's/NAME = ".*"/NAME = "SAM_2"/' setup.py
         
     - name: Build Python packages
+      env:
+        CUDA_HOME: ${{ steps.cuda-toolkit.outputs.CUDA_PATH }}
+      run: |
       run: SAM2_BUILD_ALLOW_ERRORS=0 python3 setup.py sdist bdist_wheel
 
     - name: Get version
