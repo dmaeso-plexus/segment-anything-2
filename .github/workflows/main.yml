@@ -28,6 +28,8 @@ jobs:
        
     - name: Sync Fork
       run: |
+        git config --global user.email "action@github.com"
+        git config --global user.name "GitHub Action"
         git remote add upstream https://github.com/facebookresearch/segment-anything-2.git
         git fetch upstream
         git checkout main
