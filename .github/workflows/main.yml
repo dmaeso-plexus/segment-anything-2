@@ -1,34 +1,31 @@
-name: Sync, Build and Release
-
 on:
   schedule:
     - cron: '0 0 * * *'  # Runs at 00:00 UTC every day
-  workflow_dispatch:  # Allows manual triggering
+  workflow_dispatch:  # Allows manual trigger
 
 jobs:
   sync-build-release:
     runs-on: ubuntu-latest
     
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
+    - uses: actions/checkout@v2
       with:
         fetch-depth: 0
     
     - name: Set up Python
       uses: actions/setup-python@v2
       with:
-        python-version: '3.10'  # Specify the exact Python version
-       
+        python-version: '3.x'  # Specify the Python version you need
+        
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
         pip install setuptools wheel
     
-    - name: Install PyTorch and torchvision
+    - name: Install GPU PyTorch and torchvision
       run: |
         pip install torch>=2.3.1 torchvision>=0.18.1 --extra-index-url https://download.pytorch.org/whl/cu118
-    
+       
     - name: Sync Fork
       run: |
         git config --global user.email "action@github.com"
@@ -36,30 +33,41 @@ jobs:
         git remote add upstream https://github.com/facebookresearch/segment-anything-2.git
         git fetch upstream
         git checkout main
-        git merge upstream/main --no-edit
+        git merge upstream/main
         git push origin main
-    
+
     - name: Update setup.py
       run: |
         sed -i 's/NAME = ".*"/NAME = "SAM_2"/' setup.py
-    
+        
     - name: Build Python packages
-      run: |
-        python3 setup.py sdist bdist_wheel
-    
+      run: python3 setup.py sdist bdist_wheel
+
     - name: Get version
       id: get_version
       run: |
-        VERSION=$(python setup.py --version)
+        VERSION=$(python -c "from setuptools import setup; setup()" --version 2>/dev/null)
+        if [ -z "$VERSION" ]; then
+          echo "Failed to extract version. Check your setup.py file."
+          exit 1
+        fi
         echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
         echo "Extracted version: $VERSION"
     
-    - name: Create Git tag
+  
+    - name: Check and handle existing tag
       run: |
-        git tag -f "v${{ steps.get_version.outputs.VERSION }}"
-        git push origin "v${{ steps.get_version.outputs.VERSION }}" --force
+        if git rev-parse "v${{ steps.get_version.outputs.VERSION }}" >/dev/null 2>&1; then
+          echo "Tag v${{ steps.get_version.outputs.VERSION }} already exists. Deleting and recreating."
+          git push --delete origin "v${{ steps.get_version.outputs.VERSION }}"
+          git tag -d "v${{ steps.get_version.outputs.VERSION }}"
+        fi
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        git tag -a "v${{ steps.get_version.outputs.VERSION }}" -m "Release ${{ steps.get_version.outputs.VERSION }}"
+        git push origin "v${{ steps.get_version.outputs.VERSION }}"
     
-    - name: Create Release
+    - name: Create/Update Release
       id: create_release
       uses: actions/create-release@v1
       env:
@@ -70,12 +78,15 @@ jobs:
         draft: false
         prerelease: false
     
+    - name: Zip dist directory
+      run: zip -r dist.zip dist
+    
     - name: Upload Release Asset
       uses: actions/upload-release-asset@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./dist/SAM_2-${{ steps.get_version.outputs.VERSION }}-py3-none-any.whl
-        asset_name: SAM_2-${{ steps.get_version.outputs.VERSION }}-py3-none-any.whl
-        asset_content_type: application/octet-stream
+        asset_path: ./dist.zip
+        asset_name: python-package-${{ steps.get_version.outputs.VERSION }}.zip
+        asset_content_type: application/zip
