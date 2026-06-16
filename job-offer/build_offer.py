@@ -182,7 +182,7 @@ def header_footer(c, doc):
     c.drawRightString(PAGE_W - RIGHT, PAGE_H - 40,
                       "Nexus42 Artificial Intelligence Holding PJSC")
     c.setFont("Helvetica", 7.4); c.setFillColor(GREY)
-    for i, line in enumerate(["Masdar City, Abu Dhabi, United Arab Emirates",
+    for i, line in enumerate(["Capital Gate, 12th Floor, Al Khaleej Al Arabi St, Abu Dhabi, UAE",
                               "people@nexus42.ai  ·  +971 2 555 0042  ·  nexus42.ai"]):
         c.drawRightString(PAGE_W - RIGHT, PAGE_H - 51 - i * 10, line)
     # rule (navy + gold accent)
@@ -198,7 +198,7 @@ def header_footer(c, doc):
     c.line(LEFT, fy, PAGE_W - RIGHT, fy)
     c.setFont("Helvetica", 6.9); c.setFillColor(LGREY)
     c.drawString(LEFT, fy - 11,
-                 "Nexus42 Artificial Intelligence Holding PJSC  ·  Commercial Licence No. CN-2310045  ·  Masdar City, Abu Dhabi, UAE")
+                 "Nexus42 Artificial Intelligence Holding PJSC  ·  Licence CN-2310045  ·  Capital Gate, Al Khaleej Al Arabi Street, Abu Dhabi, UAE")
     c.drawString(LEFT, fy - 20,
                  "This document is private and confidential and is intended solely for the named addressee.")
     c.setFont("Helvetica-Bold", 6.9); c.setFillColor(GREY)
@@ -251,8 +251,8 @@ def build(path):
                              ("BOTTOMPADDING", (0, 0), (-1, -1), 0)]))
     s.append(ref)
     s.append(Spacer(1, 9))
-    s.append(Paragraph("Diego Martín Maeso<br/>[ Address Line 1 ]<br/>"
-                       "[ City / Country ]", meta))
+    s.append(Paragraph("Diego Martín Maeso<br/>Avenida de Asturias 31, 1A<br/>"
+                       "34880 Guardo (Palencia)<br/>España", meta))
     s.append(Spacer(1, 12))
     s.append(Paragraph("Dear Diego Martín Maeso,", body))
     s.append(Paragraph("RE: OFFER OF EMPLOYMENT — AI TECH LEAD", title))
@@ -287,8 +287,9 @@ def build(path):
     s.append(Paragraph(
         "Your Commencement Date is anticipated to be <b>1 September 2026</b>, "
         "or such other date as may be mutually agreed in writing. Your "
-        "principal place of work will be the Company’s headquarters in "
-        "Masdar City, Abu Dhabi, United Arab Emirates, with hybrid working "
+        "principal place of work will be the Company’s headquarters at "
+        "Capital Gate, Al Khaleej Al Arabi Street, Abu Dhabi, United Arab "
+        "Emirates, with hybrid working "
         "available in accordance with Company policy.", body))
 
     s.append(Paragraph("4.&nbsp; Probationary Period", h))
@@ -299,12 +300,13 @@ def build(path):
 
     s.append(Paragraph("5.&nbsp; Remuneration", h))
     s.append(Paragraph(
-        "Your <b>total annual fixed compensation</b> will be "
-        "<b>AED 3,000,000</b> (three million United Arab Emirates Dirhams), "
-        "equivalent to approximately <b>EUR 750,000</b> per annum at an "
-        "indicative reference rate of EUR 1.00 = AED 4.00. Compensation is "
-        "paid in UAE Dirhams (AED), free of UAE personal income tax, and is "
-        "structured as follows:", body))
+        "Your <b>annual base salary</b> will be <b>AED 3,000,000</b> "
+        "(three million United Arab Emirates Dirhams), equivalent to "
+        "approximately <b>EUR 750,000</b> per annum at an indicative "
+        "reference rate of EUR 1.00 = AED 4.00. <b>In addition to your base "
+        "salary, and separately from it</b>, you will receive the cash "
+        "allowances set out below. All amounts are paid in UAE Dirhams "
+        "(AED), free of UAE personal income tax.", body))
 
     hdr = ParagraphStyle("th", fontName="Helvetica-Bold", fontSize=8.6,
                          textColor=HexColor(0xFFFFFF), leading=11)
@@ -317,10 +319,10 @@ def build(path):
         [Paragraph("Component", hdr),
          Paragraph("Annual (AED)", ParagraphStyle("hr", parent=hdr, alignment=TA_RIGHT)),
          Paragraph("Monthly (AED)", ParagraphStyle("hr2", parent=hdr, alignment=TA_RIGHT))],
-        [Paragraph("Basic salary", cell), Paragraph("1,800,000", cellr), Paragraph("150,000", cellr)],
-        [Paragraph("Housing allowance", cell), Paragraph("750,000", cellr), Paragraph("62,500", cellr)],
-        [Paragraph("Transport &amp; general allowance", cell), Paragraph("450,000", cellr), Paragraph("37,500", cellr)],
-        [Paragraph("Total fixed compensation", cellb), Paragraph("3,000,000", cellbr), Paragraph("250,000", cellbr)],
+        [Paragraph("Base salary", cell), Paragraph("3,000,000", cellr), Paragraph("250,000", cellr)],
+        [Paragraph("Housing allowance <i>(in addition to salary)</i>", cell), Paragraph("600,000", cellr), Paragraph("50,000", cellr)],
+        [Paragraph("Transport allowance <i>(in addition to salary)</i>", cell), Paragraph("120,000", cellr), Paragraph("10,000", cellr)],
+        [Paragraph("Total annual cash package", cellb), Paragraph("3,720,000", cellbr), Paragraph("310,000", cellbr)],
     ]
     t = Table(data, colWidths=[doc.width * 0.5, doc.width * 0.25, doc.width * 0.25])
     t.setStyle(TableStyle([
@@ -338,8 +340,11 @@ def build(path):
     s.append(t)
     s.append(Spacer(1, 4))
     s.append(Paragraph(
-        "Salaries are payable monthly in arrears by bank transfer to a UAE "
-        "account nominated by you.", small))
+        "Your base salary and allowances are payable monthly in arrears by "
+        "bank transfer to a UAE account nominated by you. The total annual "
+        "cash package above (AED 3,720,000, approximately EUR 930,000) is "
+        "exclusive of the benefits set out in clause 7, which are provided "
+        "in addition.", small))
 
     s.append(Paragraph("6.&nbsp; Performance Bonus and Long-Term Incentive", h))
     s.append(Paragraph(
