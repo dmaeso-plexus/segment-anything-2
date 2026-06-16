@@ -38,7 +38,9 @@
   ul li:before{content:"▪";color:var(--teal);position:absolute;left:0;top:-1px}
   .small{font-size:11.5px;color:var(--grey);margin-top:2px}
   .sign{margin-top:22px}
-  .sign .gap{height:30px}
+  .sigwrap{position:relative;height:104px;margin:4px 0 2px}
+  .sigwrap .sig{position:absolute;left:0;top:22px}
+  .sigwrap .stamp{position:absolute;left:206px;top:4px}
   .sig-name{font-weight:700;color:var(--navy)}
   .sig-role{color:var(--grey);font-size:12px}
   .accept{margin-top:22px;border-top:1px solid var(--rule);padding-top:12px}
@@ -102,9 +104,9 @@
   <div class="conf">PRIVATE &amp; CONFIDENTIAL</div>
   <div class="meta"><span>Ref:&nbsp; NX42/HR/OFR/2026/0418</span><span>Date:&nbsp; 16 June 2026</span></div>
 
-  <div class="addr">[ Candidate Full Name ]<br>[ Address Line 1 ]<br>[ City / Country ]</div>
+  <div class="addr">Diego Martín Maeso<br>[ Address Line 1 ]<br>[ City / Country ]</div>
 
-  <p>Dear [ Candidate Full Name ],</p>
+  <p>Dear Diego Martín Maeso,</p>
   <h1>RE: Offer of Employment — AI Tech Lead</h1>
 
   <p class="lead">We are delighted to extend to you an offer of employment with <b>Nexus42 Artificial Intelligence Holding PJSC</b> (“Nexus42” or the “Company”). Following our selection process, the Executive Committee has approved your appointment to a senior technical leadership role within our Foundation Models &amp; AI Platform division. This letter sets out the principal terms of our offer.</p>
@@ -163,15 +165,35 @@
 
   <div class="sign">
     <p>Yours sincerely,</p>
-    <div class="gap"></div>
-    <div class="sig-name">Layla Al Hashimi</div>
-    <div class="sig-role">Chief People Officer</div>
-    <div class="sig-role">Nexus42 Artificial Intelligence Holding PJSC</div>
+    <div class="sigwrap">
+      <svg class="sig" width="180" height="70" viewBox="0 0 180 70" aria-hidden="true">
+        <path d="M6 44 C 14 10, 36 6, 40 36 C 43 56, 26 50, 32 34 C 39 14, 61 20, 68 40 C 76 58, 86 22, 100 32 C 112 39, 116 20, 128 30 C 140 38, 150 26, 162 39" fill="none" stroke="#10305A" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M4 54 C 56 63, 116 60, 168 51" fill="none" stroke="#10305A" stroke-width="1.7" stroke-linecap="round"/>
+      </svg>
+      <svg class="stamp" width="118" height="118" viewBox="0 0 140 140" aria-label="Nexus42 company seal">
+        <g transform="rotate(-9 70 70)" stroke="#15517F" stroke-opacity="0.72" fill="none">
+          <circle cx="70" cy="70" r="62" stroke-width="3.2"/>
+          <circle cx="70" cy="70" r="45" stroke-width="1.6"/>
+          <line x1="40" y1="70" x2="100" y2="70" stroke-width="1.4"/>
+          <circle cx="40" cy="70" r="2.4" fill="#15517F" stroke="none"/>
+          <circle cx="100" cy="70" r="2.4" fill="#15517F" stroke="none"/>
+          <g fill="#15517F" fill-opacity="0.78" stroke="none" text-anchor="middle" font-family="Helvetica,Arial,sans-serif">
+            <text x="70" y="53" font-size="16" font-weight="700">NEXUS42</text>
+            <text x="70" y="65" font-size="9">AI HOLDING PJSC</text>
+            <text x="70" y="88" font-size="12" font-weight="700">ABU DHABI</text>
+            <text x="70" y="100" font-size="9">U.A.E.</text>
+          </g>
+        </g>
+      </svg>
+    </div>
+    <div class="sig-name">Khalid Al Nuaimi</div>
+    <div class="sig-role">Group Chief Executive Officer</div>
+    <div class="sig-role">For and on behalf of Nexus42 Artificial Intelligence Holding PJSC</div>
   </div>
 
   <div class="accept">
     <h2>Acceptance</h2>
-    <p>I, <span class="fill"></span>, accept the offer of employment on the terms set out in this letter.</p>
+    <p>I, <b>Diego Martín Maeso</b>, accept the offer of employment on the terms set out in this letter.</p>
     <div class="lines">
       <div>Signature: <span class="fill"></span></div>
       <div>Date: <span class="fill s"></span></div>

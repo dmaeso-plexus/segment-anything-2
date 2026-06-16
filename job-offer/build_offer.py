@@ -13,7 +13,7 @@ from reportlab.lib.styles import ParagraphStyle
 from reportlab.lib.enums import TA_JUSTIFY, TA_RIGHT, TA_CENTER
 from reportlab.platypus import (
     BaseDocTemplate, PageTemplate, Frame, Paragraph, Spacer, Table,
-    TableStyle, KeepTogether, HRFlowable,
+    TableStyle, KeepTogether, HRFlowable, Flowable,
 )
 
 # ---- Brand palette ---------------------------------------------------------
@@ -112,6 +112,67 @@ def draw_logo(c, cx, cy, R, wordmark=True):
     c.restoreState()
 
 
+def draw_signature(c, x, y, s=1.0):
+    """A flowing, abstract cursive mark (not any real person's signature)."""
+    c.saveState()
+    c.setStrokeColor(HexColor(0x10305A))
+    c.setLineWidth(1.7); c.setLineCap(1); c.setLineJoin(1)
+    p = c.beginPath()
+    p.moveTo(x, y)
+    p.curveTo(x + 8 * s, y + 34 * s, x + 30 * s, y + 38 * s, x + 34 * s, y + 8 * s)
+    p.curveTo(x + 37 * s, y - 12 * s, x + 20 * s, y - 6 * s, x + 26 * s, y + 10 * s)
+    p.curveTo(x + 33 * s, y + 30 * s, x + 55 * s, y + 24 * s, x + 62 * s, y + 4 * s)
+    p.curveTo(x + 70 * s, y - 14 * s, x + 80 * s, y + 22 * s, x + 94 * s, y + 12 * s)
+    p.curveTo(x + 106 * s, y + 5 * s, x + 110 * s, y + 24 * s, x + 122 * s, y + 14 * s)
+    p.curveTo(x + 134 * s, y + 6 * s, x + 144 * s, y + 18 * s, x + 156 * s, y + 5 * s)
+    c.drawPath(p, stroke=1, fill=0)
+    p2 = c.beginPath()
+    p2.moveTo(x - 2 * s, y - 10 * s)
+    p2.curveTo(x + 52 * s, y - 19 * s, x + 112 * s, y - 16 * s, x + 162 * s, y - 7 * s)
+    c.drawPath(p2, stroke=1, fill=0)
+    c.restoreState()
+
+
+def draw_stamp(c, cx, cy, r, angle=-9):
+    """A fictional round company seal for Nexus42."""
+    ink = HexColor(0x15517F)
+    c.saveState()
+    c.translate(cx, cy); c.rotate(angle)
+    c.setStrokeColor(ink); c.setFillColor(ink)
+    c.setStrokeAlpha(0.72); c.setFillAlpha(0.72)
+    c.setLineWidth(1.9); c.circle(0, 0, r, stroke=1, fill=0)
+    c.setLineWidth(0.9); c.circle(0, 0, r * 0.72, stroke=1, fill=0)
+    # divider with end dots
+    c.setLineWidth(0.8)
+    c.line(-r * 0.5, 0, r * 0.5, 0)
+    c.circle(-r * 0.5, 0, r * 0.04, stroke=0, fill=1)
+    c.circle(r * 0.5, 0, r * 0.04, stroke=0, fill=1)
+    c.setFont("Helvetica-Bold", r * 0.22)
+    c.drawCentredString(0, r * 0.30, "NEXUS42")
+    c.setFont("Helvetica", r * 0.135)
+    c.drawCentredString(0, r * 0.14, "AI HOLDING PJSC")
+    c.setFont("Helvetica-Bold", r * 0.16)
+    c.drawCentredString(0, -r * 0.16, "ABU DHABI")
+    c.setFont("Helvetica", r * 0.135)
+    c.drawCentredString(0, -r * 0.34, "U.A.E.")
+    c.setStrokeAlpha(1); c.setFillAlpha(1)
+    c.restoreState()
+
+
+class SignBlock(Flowable):
+    """Inline signature mark + company stamp for the 'signed by the company' look."""
+    def __init__(self, width, height=66):
+        Flowable.__init__(self)
+        self.width = width; self.height = height
+
+    def wrap(self, aw, ah):
+        return (self.width, self.height)
+
+    def draw(self):
+        draw_signature(self.canv, 6, 30, 1.0)
+        draw_stamp(self.canv, 232, 33, 33, angle=-9)
+
+
 def header_footer(c, doc):
     c.saveState()
     # ---- header ----
@@ -190,10 +251,10 @@ def build(path):
                              ("BOTTOMPADDING", (0, 0), (-1, -1), 0)]))
     s.append(ref)
     s.append(Spacer(1, 9))
-    s.append(Paragraph("[ Candidate Full Name ]<br/>[ Address Line 1 ]<br/>"
+    s.append(Paragraph("Diego Martín Maeso<br/>[ Address Line 1 ]<br/>"
                        "[ City / Country ]", meta))
     s.append(Spacer(1, 12))
-    s.append(Paragraph("Dear [ Candidate Full Name ],", body))
+    s.append(Paragraph("Dear Diego Martín Maeso,", body))
     s.append(Paragraph("RE: OFFER OF EMPLOYMENT — AI TECH LEAD", title))
 
     s.append(Paragraph(
@@ -335,10 +396,10 @@ def build(path):
     s.append(Spacer(1, 10))
     sigblock = [
         Paragraph("Yours sincerely,", sig),
-        Spacer(1, 26),
-        Paragraph("<b>Layla Al Hashimi</b>", sig),
-        Paragraph("Chief People Officer", meta),
-        Paragraph("Nexus42 Artificial Intelligence Holding PJSC", meta),
+        SignBlock(doc.width, height=64),
+        Paragraph("<b>Khalid Al Nuaimi</b>", sig),
+        Paragraph("Group Chief Executive Officer", meta),
+        Paragraph("For and on behalf of Nexus42 Artificial Intelligence Holding PJSC", meta),
     ]
     s.append(KeepTogether(sigblock))
 
@@ -346,7 +407,7 @@ def build(path):
     accept = [
         HRFlowable(width="100%", thickness=0.6, color=RULE, spaceAfter=6),
         Paragraph("<b>ACCEPTANCE</b>", ParagraphStyle("a", parent=h, spaceBefore=0)),
-        Paragraph("I, ___________________________________, accept the offer of "
+        Paragraph("I, <b>Diego Martín Maeso</b>, accept the offer of "
                   "employment on the terms set out in this letter.", body),
         Spacer(1, 14),
     ]
