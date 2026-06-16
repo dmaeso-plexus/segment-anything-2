@@ -24,17 +24,21 @@ A realistic, professionally formatted **mock job-offer letter** with a custom lo
 | File | What it is |
 |------|------------|
 | `Nexus42_Offer_AI-Tech-Lead.pdf` | The finished, print-ready offer letter (3 pages). |
-| `offer-letter.html` | Editable version. Open in a browser, replace the `[ ... ]` fields, then **Print → Save as PDF**. |
+| `Nexus42_Offer_AI-Tech-Lead.docx` | Editable **Microsoft Word** version — same content, with the logo and signature/seal embedded as images. |
+| `offer-letter.html` | Editable HTML version. Open in a browser and use **Print → Save as PDF**. |
 | `assets/nexus42-logo.svg` | The logo as scalable vector (for editing / reuse). |
 | `assets/nexus42-logo.png` | High-resolution transparent PNG of the logo. |
 | `build_offer.py` | Script that generates the PDF (logo drawn as vector). |
+| `build_offer_docx.py` | Script that generates the Word (.docx) version. |
 
 ## Editing
+- **Word:** edit `Nexus42_Offer_AI-Tech-Lead.docx` directly in Microsoft Word / Google Docs / LibreOffice.
 - **Quick edits** (candidate name, dates, numbers): edit `offer-letter.html` and re-print to PDF.
-- **Regenerate the PDF** after changing `build_offer.py`:
+- **Regenerate the PDF / Word** after changing the scripts:
   ```bash
-  pip install reportlab
-  python3 build_offer.py
+  pip install reportlab pymupdf pillow python-docx
+  python3 build_offer.py        # -> PDF
+  python3 build_offer_docx.py   # -> DOCX
   ```
 
 ## Compensation note
